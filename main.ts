@@ -4,15 +4,6 @@ namespace SpriteKind {
     export const Boat1 = SpriteKind.create()
     export const Boat2 = SpriteKind.create()
 }
-/**
- * TODO:
- * 
- * 1. Set game over / restart condition
- * 
- * 2. Fix random boat placement bugs
- * 
- * 3. Lay the foundation for CPU player (picks random grid location and cursor moves there with 100ms / grid space movement speed)
- */
 // moveBoat needs changes to take in the boatRotateArrayP1 or boatRotateArrayP2
 controller.up.onEvent(ControllerButtonEvent.Pressed, function () {
     rotateFlag = "nothing"
@@ -71,6 +62,10 @@ function isPlayerXWinner (enemyBoats: Sprite[][], hitOrMissPX: Sprite[]) {
             killCount += 1
         }
     }
+    if (killCount == 3) {
+        game.splash(currentPlayer, " Wins!")
+        game.over(true, effects.melt)
+    }
     return killCount
 }
 controller.A.onEvent(ControllerButtonEvent.Pressed, function () {
@@ -115,6 +110,19 @@ function switchPlayer () {
         }
         makeBoatInvisible(hitOrMissP2)
         makeBoatVisible(hitOrMissP1)
+    }
+}
+function cpuPlaceBoat0 () {
+    if (randint(0, 1) == 0) {
+        grid.place(cursor, tiles.getTileLocation(randint(0, 7), randint(0, 6)))
+        grid.place(boatSpriteArrayP2[1][0], grid.add(grid.getLocation(cursor), 0, 0))
+        grid.place(boatSpriteArrayP2[1][1], grid.add(grid.getLocation(cursor), 1, 0))
+        grid.place(boatSpriteArrayP2[1][3], grid.add(grid.getLocation(cursor), 2, 0))
+    } else {
+        grid.place(cursor, tiles.getTileLocation(randint(0, 9), randint(0, 6)))
+        grid.place(boatSpriteArrayP2[1][0], grid.add(grid.getLocation(cursor), 0, 0))
+        grid.place(boatSpriteArrayP2[1][1], grid.add(grid.getLocation(cursor), 0, 1))
+        grid.place(boatSpriteArrayP2[1][2], grid.add(grid.getLocation(cursor), 0, 2))
     }
 }
 controller.right.onEvent(ControllerButtonEvent.Pressed, function () {
